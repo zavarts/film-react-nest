@@ -20,16 +20,6 @@ export class FilmsPostgresRepository implements IFilmsRepository {
     private readonly scheduleRepository: Repository<Schedule>,
   ) {}
 
-  private parseList(value: string | null | undefined): string[] {
-    if (!value) {
-      return [];
-    }
-    return value
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
   private toScheduleDto(session: Schedule): ScheduleDto {
     return {
       id: session.id,
@@ -38,7 +28,7 @@ export class FilmsPostgresRepository implements IFilmsRepository {
       rows: session.rows,
       seats: session.seats,
       price: session.price,
-      taken: this.parseList(session.taken),
+      taken: session.taken ?? [],
     };
   }
 
@@ -47,7 +37,7 @@ export class FilmsPostgresRepository implements IFilmsRepository {
       id: film.id,
       rating: film.rating,
       director: film.director,
-      tags: this.parseList(film.tags),
+      tags: film.tags ?? [],
       title: film.title,
       about: film.about,
       description: film.description,
@@ -107,7 +97,7 @@ export class FilmsPostgresRepository implements IFilmsRepository {
       throw new SessionNotFoundError();
     }
 
-    const taken = new Set(this.parseList(session.taken));
+    const taken = new Set(session.taken ?? []);
     for (const seat of seats) {
       if (taken.has(seat)) {
         throw new SeatTakenError(seat);
@@ -115,7 +105,7 @@ export class FilmsPostgresRepository implements IFilmsRepository {
       taken.add(seat);
     }
 
-    session.taken = Array.from(taken).join(',');
+    session.taken = Array.from(taken);
     await this.scheduleRepository.save(session);
   }
 }

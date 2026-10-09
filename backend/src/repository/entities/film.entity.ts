@@ -18,8 +18,8 @@ export class Film {
   @Column()
   director: string;
 
-  @Column({ type: 'text' })
-  tags: string;
+  @Column('simple-array')
+  tags: string[];
 
   @Column()
   image: string;
@@ -60,8 +60,8 @@ export class Schedule {
   @Column({ type: 'double precision' })
   price: number;
 
-  @Column({ type: 'text' })
-  taken: string;
+  @Column('simple-array')
+  taken: string[];
 
   @ManyToOne(() => Film, (film) => film.schedule)
   @JoinColumn({ name: 'filmId' })
