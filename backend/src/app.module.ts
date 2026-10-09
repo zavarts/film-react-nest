@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
+import * as dotenv from 'dotenv';
 import * as path from 'node:path';
 
 import { configProvider } from './app.config.provider';
 import { FilmsModule } from './films/films.module';
 import { OrderModule } from './order/order.module';
 import { RepositoryModule } from './repository/repository.module';
+
+dotenv.config();
 
 @Module({
   imports: [
@@ -18,7 +21,7 @@ import { RepositoryModule } from './repository/repository.module';
       rootPath: path.join(__dirname, '..', 'public'),
       exclude: ['/api*'],
     }),
-    RepositoryModule,
+    RepositoryModule.forRoot(),
     FilmsModule,
     OrderModule,
   ],
